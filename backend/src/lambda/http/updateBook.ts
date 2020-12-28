@@ -1,9 +1,12 @@
 import 'source-map-support/register'
 
-import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
+import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
+
+import { UpdateBookRequest } from '../../requests/UpdateBookRequest'
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   const bookId = event.pathParameters.bookId
+  const updatedBook: UpdateBookRequest = JSON.parse(event.body)
 
   return {
     statusCode: 200,
@@ -11,7 +14,8 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
       'Access-Control-Allow-Origin': '*'
     },
     body: JSON.stringify({
-      bookId
+      bookId,
+      updatedBook
     })
   }
 }

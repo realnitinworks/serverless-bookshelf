@@ -1,17 +1,19 @@
 import 'source-map-support/register'
 
-import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
+import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
+
+import { CreateBookRequest } from '../../requests/CreateBookRequest'
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  const bookId = event.pathParameters.bookId
+  const newBook: CreateBookRequest = JSON.parse(event.body)
 
   return {
-    statusCode: 200,
+    statusCode: 201,
     headers: {
       'Access-Control-Allow-Origin': '*'
     },
     body: JSON.stringify({
-      bookId
+      newBook
     })
   }
 }
