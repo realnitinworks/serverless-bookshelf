@@ -67,6 +67,9 @@ functions:
           method: post
           path: books
           cors: true
+          request:
+            schema:
+              application/json: ${file(src/validation/models/create-book-model.json)}
 
   UpdateBook:
     handler: src/lambda/http/updateBook.handler

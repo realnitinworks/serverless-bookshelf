@@ -1,0 +1,25 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "book object",
+    "type": "object",
+    "properties": {
+        "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+        },
+        "author": {
+            "type": "string"
+        },
+        "description": {
+            "type": "string"
+        },
+        "attachmentUrl": {
+            "type": "string"
+        }
+    },
+    "required": [
+        "title"
+    ],
+    "additionalProperties": false
+}
