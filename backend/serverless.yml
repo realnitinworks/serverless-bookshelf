@@ -32,6 +32,7 @@ provider:
         - dynamodb:GetItem
         - dynamodb:PutItem
         - dynamodb:DeleteItem
+        - dynamodb:UpdateItem
         - dynamodb:Query
       Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.BOOKS_TABLE}
     - Effect: Allow
@@ -78,6 +79,9 @@ functions:
           method: patch
           path: books/{bookId}
           cors: true
+          request:
+            schema:
+              application/json: ${file(src/validation/models/update-book-model.json)}
 
   DeleteBook:
     handler: src/lambda/http/deleteBook.handler
