@@ -3,6 +3,7 @@ import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } f
 import { CreateBookRequest } from '../../requests/CreateBookRequest'
 import * as AWS from 'aws-sdk'
 import * as uuid from 'uuid'
+import  { getUserId } from "../utils"
 
 
 const docClient = new AWS.DynamoDB.DocumentClient();
@@ -13,7 +14,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   console.log("Processing event: ", event);
 
   const newBook: CreateBookRequest = JSON.parse(event.body);
-  const userId = "123";
+  const userId = getUserId(event);
   const bookId = uuid.v4();
   const createdAt = new Date().toISOString();
   const read = false;

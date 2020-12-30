@@ -1,6 +1,7 @@
 import 'source-map-support/register'
 import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
 import * as AWS from 'aws-sdk'
+import { getUserId } from "../utils"
 
 
 const docClient = new AWS.DynamoDB.DocumentClient();
@@ -14,7 +15,7 @@ const urlExpiration = process.env.SIGNED_URL_EXPIRATION;
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   console.log("Processing event: ", event);
 
-  const userId = "123";
+  const userId = getUserId(event);
   const bookId = event.pathParameters.bookId;
   const uploadUrl = generatePreSignedUploadUrl(bookId);
   await updateAttachmentUrl(userId, bookId);
