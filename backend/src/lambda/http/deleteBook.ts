@@ -1,26 +1,19 @@
 import 'source-map-support/register'
 import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
-import * as AWS from 'aws-sdk'
+
 import { getUserId } from "../utils"
+import { deleteBook } from '../../businessLogic/books'
 
 
-const docClient = new AWS.DynamoDB.DocumentClient();
-const booksTable = process.env.BOOKS_TABLE;
 
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   console.log("Processing event: ", event);
   
-  const userId = getUserId(event);
-  const bookId = event.pathParameters.bookId;
+  const userId: string = getUserId(event);
+  const bookId: string = event.pathParameters.bookId;
 
-  await docClient.delete({
-    TableName: booksTable,
-    Key: {
-      userId,
-      bookId
-    }
-  }).promise();
+  await deleteBook(userId, bookId);
 
   return {
     statusCode: 200,

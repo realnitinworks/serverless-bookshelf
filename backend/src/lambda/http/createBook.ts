@@ -1,45 +1,17 @@
 import 'source-map-support/register'
 import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
 import { CreateBookRequest } from '../../requests/CreateBookRequest'
-import * as AWS from 'aws-sdk'
-import * as uuid from 'uuid'
 import  { getUserId } from "../utils"
-
-
-const docClient = new AWS.DynamoDB.DocumentClient();
-const booksTable = process.env.BOOKS_TABLE;
+import { createBook } from '../../businessLogic/books'
+import { BookItem } from '../../models/BookItem'
 
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   console.log("Processing event: ", event);
 
-  const newBook: CreateBookRequest = JSON.parse(event.body);
+  const createBookRequest: CreateBookRequest = JSON.parse(event.body);
   const userId = getUserId(event);
-  const bookId = uuid.v4();
-  const createdAt = new Date().toISOString();
-  const read = false;
-  const rating = 0;
-  const title = newBook.title;
-  const author = !newBook.author ? "Unknown": newBook.author;
-  const description = !newBook.description ? "" : newBook.description;
-
-
-  const newItem = {
-    userId,
-    bookId,
-    createdAt,
-    title,
-    author,
-    description,
-    read,
-    rating
-  }
-
-  await docClient.put({
-    TableName: booksTable,
-    Item: newItem
-  }).promise();
-
+  const newBook: BookItem = await createBook(userId, createBookRequest);
 
   return {
     statusCode: 201,
@@ -47,7 +19,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
       'Access-Control-Allow-Origin': '*'
     },
     body: JSON.stringify({
-      item: newItem
+      item: newBook
     })
   }
 }
