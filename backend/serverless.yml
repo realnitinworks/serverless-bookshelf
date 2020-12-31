@@ -28,33 +28,7 @@ provider:
     ATTACHMENTS_S3_BUCKET: serverless-bookshelf-nitin-ab123de-attachments-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 300
 
-  iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - dynamodb:GetItem
-        - dynamodb:PutItem
-        - dynamodb:DeleteItem
-        - dynamodb:UpdateItem
-        - dynamodb:Query
-      Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.BOOKS_TABLE}
-    - Effect: Allow
-      Action:
-        - dynamodb:Query
-      Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.BOOKS_TABLE}/index/${self:provider.environment.TITLE_INDEX}
-    - Effect: Allow
-      Action:
-        - dynamodb:Query
-      Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.BOOKS_TABLE}/index/${self:provider.environment.RATING_INDEX}
-    - Effect: Allow
-      Action:
-        - dynamodb:Query
-      Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.BOOKS_TABLE}/index/${self:provider.environment.CREATED_AT_INDEX}
-    - Effect: Allow
-      Action:
-        - s3:GetObject
-        - s3:PutObject
-      Resource: 'arn:aws:s3:::${self:provider.environment.ATTACHMENTS_S3_BUCKET}/*'
-
+  
 functions:
   Auth:
     handler: src/lambda/auth/auth0Authorizer.handler
@@ -67,6 +41,15 @@ functions:
           path: books
           cors: true
           authorizer: Auth
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.BOOKS_TABLE}
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.BOOKS_TABLE}/index/${self:provider.environment.CREATED_AT_INDEX}
 
   CreateBook:
     handler: src/lambda/http/createBook.handler
@@ -79,6 +62,11 @@ functions:
           request:
             schema:
               application/json: ${file(src/validation/models/create-book-model.json)}
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:PutItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.BOOKS_TABLE}
 
   UpdateBook:
     handler: src/lambda/http/updateBook.handler
@@ -91,6 +79,12 @@ functions:
           request:
             schema:
               application/json: ${file(src/validation/models/update-book-model.json)}
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:GetItem
+          - dynamodb:UpdateItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.BOOKS_TABLE}
 
   DeleteBook:
     handler: src/lambda/http/deleteBook.handler
@@ -100,8 +94,14 @@ functions:
           path: books/{bookId}
           cors: true
           authorizer: Auth
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:GetItem
+          - dynamodb:DeleteItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.BOOKS_TABLE}
 
-  GenerateUploadUrl:
+  GenerateUrl:
     handler: src/lambda/http/generateUploadUrl.handler
     events:
       - http:
@@ -109,6 +109,18 @@ functions:
           path: books/{bookId}/attachment
           cors: true
           authorizer: Auth
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:GetItem
+          - dynamodb:UpdateItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.BOOKS_TABLE}
+      - Effect: Allow
+        Action:
+          - s3:GetObject
+          - s3:PutObject
+        Resource: 'arn:aws:s3:::${self:provider.environment.ATTACHMENTS_S3_BUCKET}/*'
+
 
 resources:
   Resources:
