@@ -7,10 +7,16 @@ import { UpdateBookRequest } from '../../requests/UpdateBookRequest'
 import { getUserId } from "../utils"
 import { BookItem } from "../../models/BookItem"
 import { updateBook, getBook } from "../../businessLogic/books"
+import { createLogger } from "../../utils/logger"
+
+
+const logger = createLogger('updateBook');
 
 
 export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  console.log("Processing event: ", event);
+  logger.info("Processing event for updating book", {
+    event
+  });
 
   const userId = getUserId(event);
   const bookId = event.pathParameters.bookId;
@@ -20,6 +26,7 @@ export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGat
   console.log("Book: ", book);
 
   if (!book) {
+    logger.error(`book#${bookId} does not exist`);
     return {
       statusCode: 404,
       body: JSON.stringify({

@@ -9,16 +9,23 @@ import { generatePreSignedUploadUrl,
   getBook
 } from "../../businessLogic/books"
 import { BookItem } from '../../models/BookItem'
+import { createLogger } from "../../utils/logger"
+
+
+const logger = createLogger('generateUploadUrl');
 
 
 export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  console.log("Processing event: ", event);
+  logger.info("Processing event for generating presigned url for image upload", {
+    event
+  });
 
   const userId: string = getUserId(event);
   const bookId: string = event.pathParameters.bookId;
 
   const book: BookItem = await getBook(userId, bookId);
   if (!book) {
+    logger.error(`book#${bookId} does not exist`);
     return {
       statusCode: 404,
       body: JSON.stringify({
@@ -28,7 +35,9 @@ export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGat
   }
 
   const uploadUrl: string = generatePreSignedUploadUrl(bookId);
-  await updateAttachmentUrl(userId, bookId);
+  if(uploadUrl) {
+    await updateAttachmentUrl(userId, bookId);
+  }
 
   return {
     statusCode: 200,

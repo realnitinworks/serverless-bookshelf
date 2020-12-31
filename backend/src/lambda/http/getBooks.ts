@@ -7,10 +7,16 @@ import { cors } from 'middy/middlewares'
 import { getUserId } from "../utils"
 import { getBooks } from "../../businessLogic/books"
 import { BookItem } from "../../models/BookItem"
+import { createLogger } from "../../utils/logger"
+
+
+const logger = createLogger('getBooks');
 
 
 export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  console.log("Processing event: ", event);
+  logger.info("Processing event for getting all books", {
+    event
+  });
 
   const userId = getUserId(event);
   const books: BookItem[] = await getBooks(userId);

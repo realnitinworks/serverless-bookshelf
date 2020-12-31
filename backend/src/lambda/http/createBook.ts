@@ -7,10 +7,16 @@ import { CreateBookRequest } from '../../requests/CreateBookRequest'
 import  { getUserId } from "../utils"
 import { createBook } from '../../businessLogic/books'
 import { BookItem } from '../../models/BookItem'
+import { createLogger } from "../../utils/logger"
+
+
+const logger = createLogger('createBook');
 
 
 export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  console.log("Processing event: ", event);
+  logger.info("Processing event for creating a book", {
+    event
+  });
 
   const createBookRequest: CreateBookRequest = JSON.parse(event.body);
   const userId = getUserId(event);

@@ -5,8 +5,10 @@ import { S3 } from 'aws-sdk';
 
 import { BookItem } from "../models/BookItem";
 import { UpdateBookRequest } from "../requests/UpdateBookRequest";
+import { createLogger } from "../utils/logger"
 
 
+const logger = createLogger('bookAccess');
 const XAWS = AWSXRay.captureAWS(AWS);
 
 
@@ -25,113 +27,177 @@ export class BookAccess {
 
 
     async getBook(userId: string, bookId: string): Promise<BookItem> {
-        console.log(`Getting book with id: ${bookId} for user: ${userId}`);
+        logger.info(`Getting book with id: ${bookId} for user: ${userId}`);
 
-        const result = await this.docClient.get({
-            TableName: this.booksTable,
-            Key: {
-                userId,
-                bookId
-            }
-        }).promise();
+        try {
+            const result = await this.docClient.get({
+                TableName: this.booksTable,
+                Key: {
+                    userId,
+                    bookId
+                }
+            }).promise();
 
-        return result.Item as BookItem;
+            logger.info(`Got book successfully`);
+
+            return result.Item as BookItem;
+        }
+        catch(error) {
+            logger.error(`Failed to get book#${bookId} from DB`, {
+                error
+            });
+        }        
     }
 
 
     async getBooks(userId: string): Promise<BookItem[]> {
-        console.log(`Getting all books for user: ${userId}`);
+        logger.info(`Getting all books for user: ${userId}`);
 
-        const result = await this.docClient.query({
-            TableName: this.booksTable,
-            IndexName: this.createdAtIndex,
-            KeyConditionExpression: 'userId = :userId',
-            ExpressionAttributeValues: {
-                ':userId': userId
-            },
-            ScanIndexForward: false
-        }).promise();
-        
-        const books = result.Items;
+        try {
+            const result = await this.docClient.query({
+                TableName: this.booksTable,
+                IndexName: this.createdAtIndex,
+                KeyConditionExpression: 'userId = :userId',
+                ExpressionAttributeValues: {
+                    ':userId': userId
+                },
+                ScanIndexForward: false
+            }).promise();
+            
+            const books = result.Items;
 
-        return books as BookItem[];
+            logger.info(`Got all books`,  {
+                items: books
+            })
+
+            return books as BookItem[];
+        }
+        catch(error) {
+            logger.error(`Failed to get books from DB`, {
+                error
+            });
+        }
     }
 
 
     async createBook(book: BookItem): Promise<BookItem> {
-        console.log(`Creating book with id: ${book.bookId} for user: ${book.userId}`);
+        logger.info(`Creating book with id: ${book.bookId} for user: ${book.userId}`);
 
-        await this.docClient.put({
-            TableName: this.booksTable,
-            Item: book
-        }).promise();
+        try {
+            await this.docClient.put({
+                TableName: this.booksTable,
+                Item: book
+            }).promise();
 
-        return book as BookItem;
+            logger.info(`Created book successfully`);
+
+            return book as BookItem;
+        }
+        catch(error) {
+            logger.error(`Failed to create book in DB`, {
+                error
+            });
+        }
     }
 
 
     async deleteBook(userId: string, bookId: string) {
-        console.log(`Delete book with id: ${bookId} for user: ${userId}`);
+        logger.info(`Delete book with id: ${bookId} for user: ${userId}`);
 
-        await this.docClient.delete({
-            TableName: this.booksTable,
-            Key: {
-                userId,
-                bookId
-            }
-        }).promise();
+        try {
+            await this.docClient.delete({
+                TableName: this.booksTable,
+                Key: {
+                    userId,
+                    bookId
+                }
+            }).promise();
+
+            logger.info(`Deleted book successfully`);
+        }
+        catch(error) {
+            logger.error(`Failed to delete book from DB`, {
+                error
+            });
+        }
     }
 
 
     async updateBook(book: BookItem, updatedBook: UpdateBookRequest) {
-        console.log(`Update book with id: ${book.bookId} for use: ${book.bookId}`);
+        logger.info(`Update book with id: ${book.bookId} for use: ${book.bookId}`);
 
-        await this.docClient.update({
-            TableName: this.booksTable,
-            Key: {
-                userId: book.userId,
-                bookId: book.bookId
-            },
-            UpdateExpression: "set title = :title, author = :author, description = :description, #R = :read, rating = :rating",
-            ExpressionAttributeValues: {
-                ":title": updatedBook.title,
-                ":author": updatedBook.author,
-                ":description": updatedBook.description,
-                ":read": updatedBook.read,
-                ":rating": updatedBook.rating
-            },
-            ExpressionAttributeNames: {
-                "#R": "read"
-            }  
-        }).promise();
+        try {
+            await this.docClient.update({
+                TableName: this.booksTable,
+                Key: {
+                    userId: book.userId,
+                    bookId: book.bookId
+                },
+                UpdateExpression: "set title = :title, author = :author, description = :description, #R = :read, rating = :rating",
+                ExpressionAttributeValues: {
+                    ":title": updatedBook.title,
+                    ":author": updatedBook.author,
+                    ":description": updatedBook.description,
+                    ":read": updatedBook.read,
+                    ":rating": updatedBook.rating
+                },
+                ExpressionAttributeNames: {
+                    "#R": "read"
+                }  
+            }).promise();
+
+            logger.info(`Updated book successfully`);
+        }
+        catch(error) {
+            logger.error(`Failed to update book in DB`, {
+                error
+            });
+        }
+
     }
 
 
     generatePreSignedUploadUrl(bookId: string) {
-        console.log(`Getting pre-signed url for bookId: ${bookId}`);
+        logger.info(`Getting pre-signed url for bookId: ${bookId}`);
 
-        return this.s3.getSignedUrl('putObject', {
-            Bucket: this.bucketName,
-            Key: bookId,
-            Expires: this.urlExpiration
-        })
+        try {
+            return this.s3.getSignedUrl('putObject', {
+                Bucket: this.bucketName,
+                Key: bookId,
+                Expires: this.urlExpiration
+            })
+        }
+        catch(error) {
+            logger.error(`Failed to get pre-signed url for upload`, {
+                error
+            });
+        }
     }
 
     async updateAttachmentUrl(userId: string, bookId: string) {
-        console.log(`Updating attachmentUrl of bookId: ${bookId} for userId: ${userId}`);
+        logger.info(`Updating attachmentUrl of bookId: ${bookId} for userId: ${userId}`);
 
         const attachmentUrl = `https://${this.bucketName}.s3.amazonaws.com/${bookId}`;
 
-        await this.docClient.update({
-            TableName: this.booksTable,
-            Key: {
-                userId,
-                bookId
-            },
-            UpdateExpression: "set attachmentUrl = :attachmentUrl",
-            ExpressionAttributeValues: {
-                ":attachmentUrl": attachmentUrl
-            }
-        }).promise();
+        try {
+            await this.docClient.update({
+                TableName: this.booksTable,
+                Key: {
+                    userId,
+                    bookId
+                },
+                UpdateExpression: "set attachmentUrl = :attachmentUrl",
+                ExpressionAttributeValues: {
+                    ":attachmentUrl": attachmentUrl
+                }
+            }).promise();
+
+            logger.info(`Update book with attachment url successfully`);
+        }
+        catch(error) {
+            logger.error(`Failed to update book with attachment url`, {
+                error
+            });
+        }
     }
 }
