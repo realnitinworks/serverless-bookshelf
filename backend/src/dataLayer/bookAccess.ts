@@ -1,14 +1,18 @@
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
 import { BookItem } from "../models/BookItem";
 import { UpdateBookRequest } from "../requests/UpdateBookRequest";
+import { S3 } from "aws-sdk";
 
 
 export class BookAccess {
 
     constructor(
         private readonly docClient: DocumentClient = new DocumentClient(),
+        private readonly s3 = new S3( { signatureVersion: 'v4' }),
         private readonly booksTable = process.env.BOOKS_TABLE,
-        private readonly createdAtIndex = process.env.CREATED_AT_INDEX
+        private readonly createdAtIndex = process.env.CREATED_AT_INDEX,
+        private readonly bucketName = process.env.ATTACHMENTS_S3_BUCKET,
+        private readonly urlExpiration = process.env.SIGNED_URL_EXPIRATION
     ) {
 
     }
@@ -93,6 +97,35 @@ export class BookAccess {
             ExpressionAttributeNames: {
                 "#R": "read"
             }  
+        }).promise();
+    }
+
+
+    generatePreSignedUploadUrl(bookId: string) {
+        console.log(`Getting pre-signed url for bookId: ${bookId}`);
+
+        return this.s3.getSignedUrl('putObject', {
+            Bucket: this.bucketName,
+            Key: bookId,
+            Expires: this.urlExpiration
+        })
+    }
+
+    async updateAttachmentUrl(userId: string, bookId: string) {
+        console.log(`Updating attachmentUrl of bookId: ${bookId} for userId: ${userId}`);
+
+        const attachmentUrl = `https://${this.bucketName}.s3.amazonaws.com/${bookId}`;
+
+        await this.docClient.update({
+            TableName: this.booksTable,
+            Key: {
+                userId,
+                bookId
+            },
+            UpdateExpression: "set attachmentUrl = :attachmentUrl",
+            ExpressionAttributeValues: {
+                ":attachmentUrl": attachmentUrl
+            }
         }).promise();
     }
 }

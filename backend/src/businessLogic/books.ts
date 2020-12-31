@@ -65,3 +65,13 @@ export async function updateBook(
 
     await bookAccess.updateBook(book, updatedBook);
 }
+
+
+export function generatePreSignedUploadUrl(bookId: string) {
+    return bookAccess.generatePreSignedUploadUrl(bookId);
+}
+
+
+export async function updateAttachmentUrl(userId: string, bookId: string) {
+    await bookAccess.updateAttachmentUrl(userId, bookId);
+}
