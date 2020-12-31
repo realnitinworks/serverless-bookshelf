@@ -1,13 +1,15 @@
 import 'source-map-support/register'
-import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
-import { UpdateBookRequest } from '../../requests/UpdateBookRequest'
+import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
+import * as middy from 'middy'
+import { cors } from 'middy/middlewares'
 
+import { UpdateBookRequest } from '../../requests/UpdateBookRequest'
 import { getUserId } from "../utils"
 import { BookItem } from "../../models/BookItem"
 import { updateBook, getBook } from "../../businessLogic/books"
 
 
-export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   console.log("Processing event: ", event);
 
   const userId = getUserId(event);
@@ -20,9 +22,6 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   if (!book) {
     return {
       statusCode: 404,
-      headers: {
-        'Access-Control-Allow-Origin': '*'
-      },
       body: JSON.stringify({
         "error": `book#${bookId} does not exist`
       })
@@ -33,9 +32,13 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
 
   return {
     statusCode: 200,
-    headers: {
-      'Access-Control-Allow-Origin': '*'
-    },
     body: ""
   }
-}
+});
+
+
+handler.use(
+  cors({
+    credentials: true
+  })
+);

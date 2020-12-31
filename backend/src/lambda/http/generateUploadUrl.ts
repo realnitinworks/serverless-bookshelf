@@ -1,5 +1,7 @@
 import 'source-map-support/register'
-import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
+import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
+import * as middy from 'middy'
+import { cors } from 'middy/middlewares'
 
 import { getUserId } from "../utils"
 import { generatePreSignedUploadUrl,
@@ -9,7 +11,7 @@ import { generatePreSignedUploadUrl,
 import { BookItem } from '../../models/BookItem'
 
 
-export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   console.log("Processing event: ", event);
 
   const userId: string = getUserId(event);
@@ -19,25 +21,26 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   if (!book) {
     return {
       statusCode: 404,
-      headers: {
-        'Access-Control-Allow-Origin': '*'
-      },
       body: JSON.stringify({
         "error": `book#${bookId} does not exist`
       })
     }
   }
-  
+
   const uploadUrl: string = generatePreSignedUploadUrl(bookId);
   await updateAttachmentUrl(userId, bookId);
 
   return {
     statusCode: 200,
-    headers: {
-      'Access-Control-Allow-Origin': '*'
-    },
     body: JSON.stringify({
       uploadUrl
     })
   }
-}
+});
+
+
+handler.use(
+  cors({
+    credentials: true
+  })
+);

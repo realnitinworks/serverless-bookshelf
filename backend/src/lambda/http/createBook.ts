@@ -1,12 +1,15 @@
 import 'source-map-support/register'
-import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
+import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
+import * as middy from 'middy'
+import { cors } from 'middy/middlewares'
+
 import { CreateBookRequest } from '../../requests/CreateBookRequest'
 import  { getUserId } from "../utils"
 import { createBook } from '../../businessLogic/books'
 import { BookItem } from '../../models/BookItem'
 
 
-export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   console.log("Processing event: ", event);
 
   const createBookRequest: CreateBookRequest = JSON.parse(event.body);
@@ -15,11 +18,15 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
 
   return {
     statusCode: 201,
-    headers: {
-      'Access-Control-Allow-Origin': '*'
-    },
     body: JSON.stringify({
       item: newBook
     })
   }
-}
+});
+
+
+handler.use(
+  cors({
+    credentials: true
+  })
+);
