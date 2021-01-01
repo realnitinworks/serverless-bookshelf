@@ -1,8 +1,10 @@
 export interface Todo {
-  todoId: string
+  bookId: string
   createdAt: string
-  name: string
-  dueDate: string
-  done: boolean
+  title: string
+  author: string
+  description: string
+  read: boolean
+  rating: number
   attachmentUrl?: string
 }

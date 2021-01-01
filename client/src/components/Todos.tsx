@@ -14,7 +14,7 @@ import {
   Loader
 } from 'semantic-ui-react'
 
-import { createTodo, deleteTodo, getTodos, patchTodo } from '../api/todos-api'
+import { createTodo, deleteTodo, getTodos, patchBook } from '../api/todos-api'
 import Auth from '../auth/Auth'
 import { Todo } from '../types/Todo'
 
@@ -64,7 +64,7 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
     try {
       await deleteTodo(this.props.auth.getIdToken(), todoId)
       this.setState({
-        todos: this.state.todos.filter(todo => todo.todoId != todoId)
+        todos: this.state.todos.filter(todo => todo.bookId != todoId)
       })
     } catch {
       alert('Todo deletion failed')
@@ -73,19 +73,19 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
 
   onTodoCheck = async (pos: number) => {
     try {
-      const todo = this.state.todos[pos]
-      await patchTodo(this.props.auth.getIdToken(), todo.todoId, {
-        name: todo.name,
-        dueDate: todo.dueDate,
-        done: !todo.done
+      const book = this.state.todos[pos]
+      await patchBook(this.props.auth.getIdToken(), book.bookId, {
+        title: book.title,
+        author: book.author,
+        read: !book.read
       })
       this.setState({
         todos: update(this.state.todos, {
-          [pos]: { done: { $set: !todo.done } }
+          [pos]: { read: { $set: !book.read } }
         })
       })
     } catch {
-      alert('Todo deletion failed')
+      alert('Toggling book read/unread failed')
     }
   }
 
@@ -161,24 +161,30 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
       <Grid padded>
         {this.state.todos.map((todo, pos) => {
           return (
-            <Grid.Row key={todo.todoId}>
+            <Grid.Row key={todo.bookId}>
               <Grid.Column width={1} verticalAlign="middle">
                 <Checkbox
                   onChange={() => this.onTodoCheck(pos)}
-                  checked={todo.done}
+                  checked={todo.read}
                 />
               </Grid.Column>
-              <Grid.Column width={10} verticalAlign="middle">
-                {todo.name}
+              <Grid.Column width={6} verticalAlign="middle">
+                {todo.title}
               </Grid.Column>
               <Grid.Column width={3} floated="right">
-                {todo.dueDate}
+                {todo.author}
+              </Grid.Column>
+              <Grid.Column width={3} floated="right">
+                {todo.description}
+              </Grid.Column>
+              <Grid.Column width={1} floated="right">
+                {todo.rating}
               </Grid.Column>
               <Grid.Column width={1} floated="right">
                 <Button
                   icon
                   color="blue"
-                  onClick={() => this.onEditButtonClick(todo.todoId)}
+                  onClick={() => this.onEditButtonClick(todo.bookId)}
                 >
                   <Icon name="pencil" />
                 </Button>
@@ -187,7 +193,7 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
                 <Button
                   icon
                   color="red"
-                  onClick={() => this.onTodoDelete(todo.todoId)}
+                  onClick={() => this.onTodoDelete(todo.bookId)}
                 >
                   <Icon name="delete" />
                 </Button>
