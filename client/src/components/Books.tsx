@@ -14,7 +14,7 @@ import {
   Loader
 } from 'semantic-ui-react'
 
-import { createBook, deleteTodo, getTodos, patchBook } from '../api/todos-api'
+import { createBook, deleteBook, getTodos, patchBook } from '../api/todos-api'
 import Auth from '../auth/Auth'
 import { Book } from '../types/Book'
 
@@ -64,12 +64,12 @@ export class Books extends React.PureComponent<BooksProps, BooksState> {
 
   onTodoDelete = async (bookId: string) => {
     try {
-      await deleteTodo(this.props.auth.getIdToken(), bookId)
+      await deleteBook(this.props.auth.getIdToken(), bookId)
       this.setState({
         books: this.state.books.filter(book => book.bookId != bookId)
       })
     } catch {
-      alert('Todo deletion failed')
+      alert('Book deletion failed')
     }
   }
 

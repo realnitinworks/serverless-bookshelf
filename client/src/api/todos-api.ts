@@ -43,11 +43,11 @@ export async function patchBook(
   })
 }
 
-export async function deleteTodo(
+export async function deleteBook(
   idToken: string,
-  todoId: string
+  bookId: string
 ): Promise<void> {
-  await Axios.delete(`${apiEndpoint}/todos/${todoId}`, {
+  await Axios.delete(`${apiEndpoint}/books/${bookId}`, {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${idToken}`
