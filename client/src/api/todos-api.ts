@@ -1,10 +1,10 @@
 import { apiEndpoint } from '../config'
-import { Todo } from '../types/Todo';
-import { CreateTodoRequest } from '../types/CreateTodoRequest';
+import { Book } from '../types/Book';
+import { CreateBookRequest } from '../types/CreateBookRequest';
 import Axios from 'axios'
 import { UpdateBookRequest } from '../types/UpdateBookRequest';
 
-export async function getTodos(idToken: string): Promise<Todo[]> {
+export async function getTodos(idToken: string): Promise<Book[]> {
   console.log('Fetching todos')
 
   const response = await Axios.get(`${apiEndpoint}/books`, {
@@ -17,11 +17,11 @@ export async function getTodos(idToken: string): Promise<Todo[]> {
   return response.data.items
 }
 
-export async function createTodo(
+export async function createBook(
   idToken: string,
-  newTodo: CreateTodoRequest
-): Promise<Todo> {
-  const response = await Axios.post(`${apiEndpoint}/todos`,  JSON.stringify(newTodo), {
+  newTodo: CreateBookRequest
+): Promise<Book> {
+  const response = await Axios.post(`${apiEndpoint}/books`,  JSON.stringify(newTodo), {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${idToken}`

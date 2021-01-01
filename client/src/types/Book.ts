@@ -1,4 +1,4 @@
-export interface Todo {
+export interface Book {
   bookId: string
   createdAt: string
   title: string

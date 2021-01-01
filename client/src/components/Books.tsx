@@ -14,57 +14,59 @@ import {
   Loader
 } from 'semantic-ui-react'
 
-import { createTodo, deleteTodo, getTodos, patchBook } from '../api/todos-api'
+import { createBook, deleteTodo, getTodos, patchBook } from '../api/todos-api'
 import Auth from '../auth/Auth'
-import { Todo } from '../types/Todo'
+import { Book } from '../types/Book'
 
-interface TodosProps {
+interface BooksProps {
   auth: Auth
   history: History
 }
 
-interface TodosState {
-  todos: Todo[]
-  newTodoName: string
+interface BooksState {
+  books: Book[]
+  newBookName: string
   loadingTodos: boolean
 }
 
-export class Todos extends React.PureComponent<TodosProps, TodosState> {
-  state: TodosState = {
-    todos: [],
-    newTodoName: '',
+export class Books extends React.PureComponent<BooksProps, BooksState> {
+  state: BooksState = {
+    books: [],
+    newBookName: '',
     loadingTodos: true
   }
 
   handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({ newTodoName: event.target.value })
+    this.setState({ newBookName: event.target.value })
   }
 
   onEditButtonClick = (todoId: string) => {
     this.props.history.push(`/todos/${todoId}/edit`)
   }
 
-  onTodoCreate = async (event: React.ChangeEvent<HTMLButtonElement>) => {
+  onBookCreate = async (event: React.ChangeEvent<HTMLButtonElement>) => {
     try {
-      const dueDate = this.calculateDueDate()
-      const newTodo = await createTodo(this.props.auth.getIdToken(), {
-        name: this.state.newTodoName,
-        dueDate
+      const author = "Unknown";
+      const description = "No description yet";
+      const newBook = await createBook(this.props.auth.getIdToken(), {
+        title: this.state.newBookName,
+        author,
+        description
       })
       this.setState({
-        todos: [...this.state.todos, newTodo],
-        newTodoName: ''
+        books: [newBook, ...this.state.books],
+        newBookName: ''
       })
     } catch {
-      alert('Todo creation failed')
+      alert('Book creation failed')
     }
   }
 
-  onTodoDelete = async (todoId: string) => {
+  onTodoDelete = async (bookId: string) => {
     try {
-      await deleteTodo(this.props.auth.getIdToken(), todoId)
+      await deleteTodo(this.props.auth.getIdToken(), bookId)
       this.setState({
-        todos: this.state.todos.filter(todo => todo.bookId != todoId)
+        books: this.state.books.filter(book => book.bookId != bookId)
       })
     } catch {
       alert('Todo deletion failed')
@@ -73,14 +75,14 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
 
   onTodoCheck = async (pos: number) => {
     try {
-      const book = this.state.todos[pos]
+      const book = this.state.books[pos]
       await patchBook(this.props.auth.getIdToken(), book.bookId, {
         title: book.title,
         author: book.author,
         read: !book.read
       })
       this.setState({
-        todos: update(this.state.todos, {
+        books: update(this.state.books, {
           [pos]: { read: { $set: !book.read } }
         })
       })
@@ -91,9 +93,9 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
 
   async componentDidMount() {
     try {
-      const todos = await getTodos(this.props.auth.getIdToken())
+      const books = await getTodos(this.props.auth.getIdToken())
       this.setState({
-        todos,
+        books,
         loadingTodos: false
       })
     } catch (e) {
@@ -104,7 +106,7 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
   render() {
     return (
       <div>
-        <Header as="h1">TODOs</Header>
+        <Header as="h1">My BookShelf</Header>
 
         {this.renderCreateTodoInput()}
 
@@ -122,12 +124,12 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
               color: 'teal',
               labelPosition: 'left',
               icon: 'add',
-              content: 'New task',
-              onClick: this.onTodoCreate
+              content: 'New Book',
+              onClick: this.onBookCreate
             }}
             fluid
             actionPosition="left"
-            placeholder="To change the world..."
+            placeholder="A book you just found..."
             onChange={this.handleNameChange}
           />
         </Grid.Column>
@@ -159,7 +161,7 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
   renderTodosList() {
     return (
       <Grid padded>
-        {this.state.todos.map((todo, pos) => {
+        {this.state.books.map((todo, pos) => {
           return (
             <Grid.Row key={todo.bookId}>
               <Grid.Column width={1} verticalAlign="middle">
