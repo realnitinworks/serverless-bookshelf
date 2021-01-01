@@ -4,8 +4,8 @@ import { CreateBookRequest } from '../types/CreateBookRequest';
 import Axios from 'axios'
 import { UpdateBookRequest } from '../types/UpdateBookRequest';
 
-export async function getTodos(idToken: string): Promise<Book[]> {
-  console.log('Fetching todos')
+export async function getBooks(idToken: string): Promise<Book[]> {
+  console.log('Fetching books')
 
   const response = await Axios.get(`${apiEndpoint}/books`, {
     headers: {
@@ -13,7 +13,7 @@ export async function getTodos(idToken: string): Promise<Book[]> {
       'Authorization': `Bearer ${idToken}`
     },
   })
-  console.log('Todos:', response.data)
+  console.log('Books:', response.data)
   return response.data.items
 }
 
@@ -57,9 +57,9 @@ export async function deleteBook(
 
 export async function getUploadUrl(
   idToken: string,
-  todoId: string
+  bookId: string
 ): Promise<string> {
-  const response = await Axios.post(`${apiEndpoint}/todos/${todoId}/attachment`, '', {
+  const response = await Axios.post(`${apiEndpoint}/books/${bookId}/attachment`, '', {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${idToken}`

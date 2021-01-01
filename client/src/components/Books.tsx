@@ -14,7 +14,7 @@ import {
   Loader
 } from 'semantic-ui-react'
 
-import { createBook, deleteBook, getTodos, patchBook } from '../api/todos-api'
+import { createBook, deleteBook, getBooks, patchBook } from '../api/books-api'
 import Auth from '../auth/Auth'
 import { Book } from '../types/Book'
 
@@ -40,8 +40,8 @@ export class Books extends React.PureComponent<BooksProps, BooksState> {
     this.setState({ newBookName: event.target.value })
   }
 
-  onEditButtonClick = (todoId: string) => {
-    this.props.history.push(`/todos/${todoId}/edit`)
+  onEditButtonClick = (bookId: string) => {
+    this.props.history.push(`/books/${bookId}/edit`)
   }
 
   onBookCreate = async (event: React.ChangeEvent<HTMLButtonElement>) => {
@@ -93,13 +93,13 @@ export class Books extends React.PureComponent<BooksProps, BooksState> {
 
   async componentDidMount() {
     try {
-      const books = await getTodos(this.props.auth.getIdToken())
+      const books = await getBooks(this.props.auth.getIdToken())
       this.setState({
         books,
         loadingTodos: false
       })
     } catch (e) {
-      alert(`Failed to fetch todos: ${e.message}`)
+      alert(`Failed to fetch books: ${e.message}`)
     }
   }
 
@@ -108,14 +108,14 @@ export class Books extends React.PureComponent<BooksProps, BooksState> {
       <div>
         <Header as="h1">My BookShelf</Header>
 
-        {this.renderCreateTodoInput()}
+        {this.renderCreateBookInput()}
 
-        {this.renderTodos()}
+        {this.renderBooks()}
       </div>
     )
   }
 
-  renderCreateTodoInput() {
+  renderCreateBookInput() {
     return (
       <Grid.Row>
         <Grid.Column width={16}>
@@ -140,12 +140,12 @@ export class Books extends React.PureComponent<BooksProps, BooksState> {
     )
   }
 
-  renderTodos() {
+  renderBooks() {
     if (this.state.loadingTodos) {
       return this.renderLoading()
     }
 
-    return this.renderTodosList()
+    return this.renderBooksList()
   }
 
   renderLoading() {
@@ -158,35 +158,35 @@ export class Books extends React.PureComponent<BooksProps, BooksState> {
     )
   }
 
-  renderTodosList() {
+  renderBooksList() {
     return (
       <Grid padded>
-        {this.state.books.map((todo, pos) => {
+        {this.state.books.map((book, pos) => {
           return (
-            <Grid.Row key={todo.bookId}>
+            <Grid.Row key={book.bookId}>
               <Grid.Column width={1} verticalAlign="middle">
                 <Checkbox
                   onChange={() => this.onTodoCheck(pos)}
-                  checked={todo.read}
+                  checked={book.read}
                 />
               </Grid.Column>
               <Grid.Column width={6} verticalAlign="middle">
-                {todo.title}
+                {book.title}
               </Grid.Column>
               <Grid.Column width={3} floated="right">
-                {todo.author}
+                {book.author}
               </Grid.Column>
               <Grid.Column width={3} floated="right">
-                {todo.description}
+                {book.description}
               </Grid.Column>
               <Grid.Column width={1} floated="right">
-                {todo.rating}
+                {book.rating}
               </Grid.Column>
               <Grid.Column width={1} floated="right">
                 <Button
                   icon
                   color="blue"
-                  onClick={() => this.onEditButtonClick(todo.bookId)}
+                  onClick={() => this.onEditButtonClick(book.bookId)}
                 >
                   <Icon name="pencil" />
                 </Button>
@@ -195,13 +195,13 @@ export class Books extends React.PureComponent<BooksProps, BooksState> {
                 <Button
                   icon
                   color="red"
-                  onClick={() => this.onTodoDelete(todo.bookId)}
+                  onClick={() => this.onTodoDelete(book.bookId)}
                 >
                   <Icon name="delete" />
                 </Button>
               </Grid.Column>
-              {todo.attachmentUrl && (
-                <Image src={todo.attachmentUrl} size="small" wrapped />
+              {book.attachmentUrl && (
+                <Image src={book.attachmentUrl} size="small" wrapped />
               )}
               <Grid.Column width={16}>
                 <Divider />
