@@ -9,7 +9,7 @@ enum UploadState {
   UploadingFile,
 }
 
-interface EditTodoProps {
+interface EditBookProps {
   match: {
     params: {
       bookId: string
@@ -18,16 +18,16 @@ interface EditTodoProps {
   auth: Auth
 }
 
-interface EditTodoState {
+interface EditBookState {
   file: any
   uploadState: UploadState
 }
 
-export class EditTodo extends React.PureComponent<
-  EditTodoProps,
-  EditTodoState
+export class EditBook extends React.PureComponent<
+  EditBookProps,
+  EditBookState
 > {
-  state: EditTodoState = {
+  state: EditBookState = {
     file: undefined,
     uploadState: UploadState.NoUpload
   }
