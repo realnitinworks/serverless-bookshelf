@@ -4,7 +4,7 @@ import * as middy from 'middy'
 import { cors } from 'middy/middlewares'
 
 import { CreateBookRequest } from '../../requests/CreateBookRequest'
-import  { getUserId } from "../utils"
+import  { getUserId , getEmail } from "../utils"
 import { createBook } from '../../businessLogic/books'
 import { BookItem } from '../../models/BookItem'
 import { createLogger } from "../../utils/logger"
@@ -20,7 +20,10 @@ export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGat
 
   const createBookRequest: CreateBookRequest = JSON.parse(event.body);
   const userId = getUserId(event);
+  const email = getEmail(event);
   const newBook: BookItem = await createBook(userId, createBookRequest);
+
+  console.log("Email of user = ", email);
 
   return {
     statusCode: 201,
