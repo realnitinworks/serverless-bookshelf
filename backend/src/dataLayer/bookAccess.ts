@@ -17,6 +17,7 @@ export class BookAccess {
     constructor(
         private readonly docClient: DocumentClient = new XAWS.DynamoDB.DocumentClient(),
         private readonly s3: S3 = new XAWS.S3( { signatureVersion: 'v4' }),
+        private readonly SES = new XAWS.SES(),
         private readonly booksTable = process.env.BOOKS_TABLE,
         private readonly createdAtIndex = process.env.CREATED_AT_INDEX,
         private readonly bucketName = process.env.ATTACHMENTS_S3_BUCKET,
@@ -198,6 +199,33 @@ export class BookAccess {
             logger.error(`Failed to update book with attachment url`, {
                 error
             });
+        }
+    }
+
+    async sendEmail(email: string, subject: string, text: string) {
+        const params: AWS.SES.SendEmailRequest = {
+            Destination: {
+                ToAddresses: [email]
+            },
+            Message: {
+                Body: {
+                    Text: {
+                        Data: text
+                    }
+                },
+                Subject: { Data: subject }
+            },
+            Source: "serverless.bookshelf@gmail.com"
+        }
+
+        try {
+            await this.SES.sendEmail(params).promise();
+            logger.info("Email send out succesfully")
+        }
+        catch (error) {
+            logger.error("Email sending failed", {
+                error
+            })
         }
     }
 }

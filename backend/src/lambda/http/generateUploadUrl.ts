@@ -3,7 +3,7 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda'
 import * as middy from 'middy'
 import { cors } from 'middy/middlewares'
 
-import { getUserId } from "../utils"
+import { getEmail } from "../utils"
 import { generatePreSignedUploadUrl,
   updateAttachmentUrl,
   getBook
@@ -20,7 +20,7 @@ export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGat
     event
   });
 
-  const userId: string = getUserId(event);
+  const userId: string = getEmail(event);
   const bookId: string = event.pathParameters.bookId;
 
   const book: BookItem = await getBook(userId, bookId);

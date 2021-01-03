@@ -75,3 +75,14 @@ export function generatePreSignedUploadUrl(bookId: string) {
 export async function updateAttachmentUrl(userId: string, bookId: string) {
     await bookAccess.updateAttachmentUrl(userId, bookId);
 }
+
+
+export async function emailOnBookCreate(newBook) {
+    const email: string = newBook.userId.S;
+    const title: string = newBook.title.S;
+    const text: string = `A new book "${title}" has been added to your bookshelf. 
+                        Consider updating author and description. You can also rate the book and mark it as read.`;
+    const subject: string = "New Book Added";
+
+    await bookAccess.sendEmail(email, subject, text);
+}

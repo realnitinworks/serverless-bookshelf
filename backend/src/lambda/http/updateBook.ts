@@ -4,7 +4,7 @@ import * as middy from 'middy'
 import { cors } from 'middy/middlewares'
 
 import { UpdateBookRequest } from '../../requests/UpdateBookRequest'
-import { getUserId } from "../utils"
+import { getEmail } from "../utils"
 import { BookItem } from "../../models/BookItem"
 import { updateBook, getBook } from "../../businessLogic/books"
 import { createLogger } from "../../utils/logger"
@@ -18,7 +18,7 @@ export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGat
     event
   });
 
-  const userId = getUserId(event);
+  const userId = getEmail(event);
   const bookId = event.pathParameters.bookId;
   const updatedBook: UpdateBookRequest = JSON.parse(event.body);
 

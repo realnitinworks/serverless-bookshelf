@@ -4,7 +4,7 @@ import * as middy from 'middy'
 import { cors } from 'middy/middlewares'
 
 
-import { getUserId } from "../utils"
+import { getEmail } from "../utils"
 import { getBooks } from "../../businessLogic/books"
 import { BookItem } from "../../models/BookItem"
 import { createLogger } from "../../utils/logger"
@@ -18,7 +18,7 @@ export const handler = middy(async (event: APIGatewayProxyEvent): Promise<APIGat
     event
   });
 
-  const userId = getUserId(event);
+  const userId = getEmail(event);
   const books: BookItem[] = await getBooks(userId);
 
   return {
