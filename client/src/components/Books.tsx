@@ -68,6 +68,7 @@ export class Books extends React.PureComponent<BooksProps, BooksState> {
       this.setState({
         books: this.state.books.filter(book => book.bookId != bookId)
       })
+      alert("Book removed from bookshelf");
     } catch {
       alert('Book deletion failed')
     }
@@ -161,6 +162,26 @@ export class Books extends React.PureComponent<BooksProps, BooksState> {
   renderBooksList() {
     return (
       <Grid padded>
+        <Grid.Row>
+          <Grid.Column width={1} verticalAlign="middle">
+            <Header as="h4">Read</Header>
+          </Grid.Column>
+          <Grid.Column width={6} verticalAlign="middle">
+            <Header as="h4">Title</Header>
+          </Grid.Column>
+          <Grid.Column width={2} floated="right">
+            <Header as="h4">Author</Header>
+          </Grid.Column>
+          <Grid.Column width={2} floated="right">
+            <Header as="h4">Description</Header>
+          </Grid.Column>
+          <Grid.Column width={1} floated="right">
+            <Header as="h4">Rating</Header>
+          </Grid.Column>
+          <Grid.Column width={2} floated="right">
+            <Header as="h4">Edit</Header>
+          </Grid.Column>
+        </Grid.Row>
         {this.state.books.map((book, pos) => {
           return (
             <Grid.Row key={book.bookId}>
