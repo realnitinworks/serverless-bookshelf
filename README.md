@@ -1,6 +1,6 @@
 # Serverless Bookshelf
 
-This project is done as the Capstone Project of Cloud Developer Nanodegree. The goal of this project to implement a simple Bookshelf application using AWS Lambda and Serverless framework.
+This project is done as the Capstone Project of Cloud Developer Nanodegree. The goal of this project is to implement a simple Bookshelf application using AWS Lambda and Serverless framework.
 
 ![Tooo Demo](images/Demo.gif)
 
