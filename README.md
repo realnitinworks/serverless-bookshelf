@@ -93,6 +93,8 @@ It returns a new Book item that looks like this:
 }
 ```
 
+When a book is added to the bookshelf, the user is notified via email. The is done using the AWS Simple Email Service(SES). 
+
 * `UpdateBook` - updates a Book item created by a current user. A shape of data send by a client application to this function can be found in the `UpdateBookRequest.ts` file
 
 It receives an object that contains five fields that can be updated in a book item:
