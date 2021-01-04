@@ -1,0 +1,255 @@
+{
+	"info": {
+		"_postman_id": "6e8fe290-89e5-4c03-9cf9-6d06625c6fc2",
+		"name": "Udacity Capstone Project",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "BookShelf",
+			"item": [
+				{
+					"name": "Get all books",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://{{apiId}}.execute-api.ap-south-1.amazonaws.com/dev/books",
+							"protocol": "https",
+							"host": [
+								"{{apiId}}",
+								"execute-api",
+								"ap-south-1",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"books"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create book",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"title\": \"Book124\",\n    \"description\": \"desc124\",\n    \"author\": \"author124\"\n}"
+						},
+						"url": {
+							"raw": "https://{{apiId}}.execute-api.ap-south-1.amazonaws.com/dev/books",
+							"protocol": "https",
+							"host": [
+								"{{apiId}}",
+								"execute-api",
+								"ap-south-1",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"books"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update book",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n            \n    \"rating\": 5\n}"
+						},
+						"url": {
+							"raw": "https://{{apiId}}.execute-api.ap-south-1.amazonaws.com/dev/books/9321abfb-1fc7-44aa-898f-64cd602880b6",
+							"protocol": "https",
+							"host": [
+								"{{apiId}}",
+								"execute-api",
+								"ap-south-1",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"books",
+								"9321abfb-1fc7-44aa-898f-64cd602880b6"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete book",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://{{apiId}}.execute-api.ap-south-1.amazonaws.com/dev/books/d74dce28-cd71-4f9b-8486-36f375dac705",
+							"protocol": "https",
+							"host": [
+								"{{apiId}}",
+								"execute-api",
+								"ap-south-1",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"books",
+								"d74dce28-cd71-4f9b-8486-36f375dac705"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get attachment URL",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://{{apiId}}.execute-api.ap-south-1.amazonaws.com/dev/books/2c074a56-b903-4d8c-bb23-45bcde72ddbb/attachment",
+							"protocol": "https",
+							"host": [
+								"{{apiId}}",
+								"execute-api",
+								"ap-south-1",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"books",
+								"2c074a56-b903-4d8c-bb23-45bcde72ddbb",
+								"attachment"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "2cc03f6b-d59d-4cd5-949e-ff965ee5c20d",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "ed7d038b-eecc-40c7-86e7-4f6de38149a2",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "ca1cf68d-0181-4f75-8101-a4d0c0056d6e",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "9ad012ef-9782-4aca-a933-ccac8ff8a505",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "200d9662-a00a-4719-a3a6-013a38216f57",
+			"key": "apiId",
+			"value": "bshg1029t9"
+		},
+		{
+			"id": "a1d47ac2-a616-4274-80fd-6a4a3507e9b6",
+			"key": "authToken",
+			"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IkVDdHRpaUc2ZnYxd245c1UzWHlaMiJ9.eyJnaXZlbl9uYW1lIjoiTml0aW4iLCJmYW1pbHlfbmFtZSI6IkNoZXJpYW4iLCJuaWNrbmFtZSI6Im5pdGluLmNoZXJpYW4iLCJuYW1lIjoiTml0aW4gQ2hlcmlhbiIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS0vQU9oMTRHaEhhNndzZmZNN2tWYlBCR0ZncGU2aUlqWWVqWmgtRFJlNHRpSTI9czk2LWMiLCJsb2NhbGUiOiJlbi1HQiIsInVwZGF0ZWRfYXQiOiIyMDIxLTAxLTAxVDAxOjIxOjMwLjAyMFoiLCJlbWFpbCI6Im5pdGluLmNoZXJpYW5AZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImlzcyI6Imh0dHBzOi8vZGV2LTMtLTRteXB1LnVzLmF1dGgwLmNvbS8iLCJzdWIiOiJnb29nbGUtb2F1dGgyfDExODEyNDcyOTQ3MTE0OTMxMDY1NyIsImF1ZCI6IlNVWnRHNzJ6Zmc0cGV3aFBvdm92VjQ1M2dYNmxnZmU3IiwiaWF0IjoxNjA5NDY0MTAyLCJleHAiOjE2MTMwNjQxMDIsImF0X2hhc2giOiJ3NEVSOERibS10SERaNGhPWm4wNVpnIiwibm9uY2UiOiJQdGZLNHVBUTYzdXAtVm9Ga3p2WmhsX2NrS213NXBuRiJ9.cnPbFDMX7kh_Sgf0OBdMmctgEZsvYch-lpbmr8Fyan4FBoR_GPxpZ5C8lmlIhIJ3KLAcNn9lKzPmvLFZKvp_Rt02AUv2pLMg_QuN-DA1hwbbMw9Sc5qzP96-ewldl35ZYkgkoVdv1ogdmOcxD5WBCSLDpOCyGur7uUPn1CHyPVsNbBfapdkZuup7NdNhZ276IrC6Anc6FKT8O0PbtQ_vf2YcXXrpV846DgW2XiMzxL1r8c-po2S0C2AYFVYX91ZfGc_Zqr8zUCm966HSuEdwyKJc3yds3YNgNdj3KGYH5gMn9PaHnmWdnlSjtdWu8eGtKbCtmOfUkp9qPNteTenwFw"
+		}
+	],
+	"protocolProfileBehavior": {}
+}
