@@ -1,114 +1,127 @@
-# Serverless TODO
+# Serverless Bookshelf
 
-To implement this project, you need to implement a simple TODO application using AWS Lambda and Serverless framework. Search for all comments starting with the `TODO:` in the code to find the placeholders that you need to implement.
+This project is done as the Capstone Project of Cloud Developer Nanodegree. The goal of this project to implement a simple Bookshelf application using AWS Lambda and Serverless framework.
 
-# Functionality of the application
+![Tooo Demo](images/Demo.gif)
 
-This application will allow creating/removing/updating/fetching TODO items. Each TODO item can optionally have an attachment image. Each user only has access to TODO items that he/she has created.
+## Functionality of the application
 
-# TODO items
+This application allows to create/remove/update/fetch books into a user's bookshelf. Each book item can optionally have an attachment image. Each user only has access to book items that he/she has created.
 
-The application should store TODO items, and each TODO item contains the following fields:
+## Book Item
 
-* `todoId` (string) - a unique id for an item
-* `createdAt` (string) - date and time when an item was created
-* `name` (string) - name of a TODO item (e.g. "Change a light bulb")
-* `dueDate` (string) - date and time by which an item should be completed
-* `done` (boolean) - true if an item was completed, false otherwise
-* `attachmentUrl` (string) (optional) - a URL pointing to an image attached to a TODO item
+The application stores Book items, and each Book item contains the following fields:
 
-You might also store an id of a user who created a TODO item.
+* `bookId` (string) - a unique id for a book
+* `userId` (string) - the user id that created this book item
+* `createdAt` (string) - date and time when a book was added to the bookshelf
+* `title` (string) - title of the book (e.g. "How Innovation Works")
+* `author` (string) - author of the book (e.g. "Matt Ridley")
+* `description` (string) - description of the book
+* `read` (boolean) - a flag indicating whether the book has been read or not
+* `rating` (number) - a user's rating of the book, default 0, allowed values 1-5
+* `attachmentUrl` (string) (optional) - a URL pointing to an image attached to a Book item
 
 
-# Functions to be implemented
+## Functions implemented
 
-To implement this project, you need to implement the following functions and configure them in the `serverless.yml` file:
+To implement this project, the following functions have been configured: 
 
-* `Auth` - this function should implement a custom authorizer for API Gateway that should be added to all other functions.
+* `Auth` - this function implements a custom authorizer for API Gateway that is attached to all other functions.
 
-* `GetTodos` - should return all TODOs for a current user. A user id can be extracted from a JWT token that is sent by the frontend
+* `GetBooks` - returns all books added to the bookshelf for a current user. A user id is extracted from a JWT token that is sent by the frontend
 
-It should return data that looks like this:
+It returns data that looks like this:
 
 ```json
 {
-  "items": [
-    {
-      "todoId": "123",
-      "createdAt": "2019-07-27T20:01:45.424Z",
-      "name": "Buy milk",
-      "dueDate": "2019-07-29T20:01:45.424Z",
-      "done": false,
-      "attachmentUrl": "http://example.com/image.png"
-    },
-    {
-      "todoId": "456",
-      "createdAt": "2019-07-27T20:01:45.424Z",
-      "name": "Send a letter",
-      "dueDate": "2019-07-29T20:01:45.424Z",
-      "done": true,
-      "attachmentUrl": "http://example.com/image.png"
-    },
-  ]
+    "items": [
+        {
+            "read": true,
+            "bookId": "94eca36a-dc94-4d36-a465-8b55fb60b1e3",
+            "rating": 5,
+            "attachmentUrl": "https://serverless-bookshelf-nitin-ab123de-attachments-dev.s3.amazonaws.com/94eca36a-dc94-4d36-a465-8b55fb60b1e3",
+            "userId": "realnitinworks@gmail.com",
+            "createdAt": "2021-01-04T06:28:07.742Z",
+            "description": "A book that can change the course of your life",
+            "author": "Dale Carnegie",
+            "title": "How to stop worrying and start living"
+        },
+        {
+            "read": true,
+            "bookId": "92feb3f8-5f18-4492-9efe-a27a24accab9",
+            "rating": 3,
+            "attachmentUrl": "https://serverless-bookshelf-nitin-ab123de-attachments-dev.s3.amazonaws.com/92feb3f8-5f18-4492-9efe-a27a24accab9",
+            "userId": "realnitinworks@gmail.com",
+            "createdAt": "2021-01-04T06:26:06.194Z",
+            "description": "Innovation flourishes in freedom",
+            "author": "Matt Ridley",
+            "title": "How Innovation Works"
+        }
+    ]
 }
 ```
 
-* `CreateTodo` - should create a new TODO for a current user. A shape of data send by a client application to this function can be found in the `CreateTodoRequest.ts` file
+The book items are sorted by the createdAt attribute in descending order.
 
-It receives a new TODO item to be created in JSON format that looks like this:
+* `CreateBook` - create/adds a new Book into the current user's bookshelf. A shape of data send by a client application to this function can be found in the `CreateBookRequest.ts` file
+
+It receives a new Book item to be created in JSON format that looks like this:
 
 ```json
 {
-  "createdAt": "2019-07-27T20:01:45.424Z",
-  "name": "Buy milk",
-  "dueDate": "2019-07-29T20:01:45.424Z",
-  "done": false,
-  "attachmentUrl": "http://example.com/image.png"
+	  "title": "How to stop worrying and start living",
+    "description": "A book that can change the course of your life",
+    "author": "Dale Carnegie"
 }
 ```
 
-It should return a new TODO item that looks like this:
+It returns a new Book item that looks like this:
 
 ```json
 {
-  "item": {
-    "todoId": "123",
-    "createdAt": "2019-07-27T20:01:45.424Z",
-    "name": "Buy milk",
-    "dueDate": "2019-07-29T20:01:45.424Z",
-    "done": false,
-    "attachmentUrl": "http://example.com/image.png"
-  }
+    "item": {
+        "userId": "realnitinworks@gmail.com",
+        "bookId": "c13a26c4-2604-4493-8176-3b445394b47b",
+        "createdAt": "2021-01-04T07:26:01.320Z",
+        "title": "How to stop worrying and start living",
+        "author": "Dale Carnegie",
+        "description": "A book that can change the course of your life",
+        "read": false,
+        "rating": 0
+    }
 }
 ```
 
-* `UpdateTodo` - should update a TODO item created by a current user. A shape of data send by a client application to this function can be found in the `UpdateTodoRequest.ts` file
+* `UpdateBook` - updates a Book item created by a current user. A shape of data send by a client application to this function can be found in the `UpdateBookRequest.ts` file
 
-It receives an object that contains three fields that can be updated in a TODO item:
+It receives an object that contains five fields that can be updated in a book item:
 
 ```json
 {
-  "name": "Buy bread",
-  "dueDate": "2019-07-29T20:01:45.424Z",
-  "done": true
+    title: string
+    author: string
+    description: string
+    read: boolean
+    rating: number
 }
 ```
 
-The id of an item that should be updated is passed as a URL parameter.
+The id of an item that has to be updated is passed as a URL parameter.
 
-It should return an empty body.
+It returns an empty body.
 
-* `DeleteTodo` - should delete a TODO item created by a current user. Expects an id of a TODO item to remove.
+* `DeleteBook` - deletes a Book from the bookshelf of the current user. Expects an id of a book item to remove.
 
-It should return an empty body.
+It returns an empty body.
 
-* `GenerateUploadUrl` - returns a pre-signed URL that can be used to upload an attachment file for a TODO item.
+* `GenerateUploadUrl` - returns a pre-signed URL that can be used to upload an attachment file for a Book item.
 
-It should return a JSON object that looks like this:
+It returns a JSON object that looks like this:
 
 ```json
 {
-  "uploadUrl": "https://s3-bucket-name.s3.eu-west-2.amazonaws.com/image.png"
+  "uploadUrl": "https://s3-bucket-name.s3.ap-south-1.amazonaws.com/image.png"
 }
 ```
 
@@ -116,124 +129,33 @@ All functions are already connected to appropriate events from API Gateway.
 
 An id of a user can be extracted from a JWT token passed by a client.
 
-You also need to add any necessary resources to the `resources` section of the `serverless.yml` file such as DynamoDB table and S3 bucket.
+The `serverless.yml` file includes all of these functions as well as a DynamoDB table and a S3 bucket in the `resources`.
 
-
-# Frontend
-
-The `client` folder contains a web application that can use the API that should be developed in the project.
-
-This frontend should work with your serverless application once it is developed, you don't need to make any changes to the code. The only file that you need to edit is the `config.ts` file in the `client` folder. This file configures your client application just as it was done in the course and contains an API endpoint and Auth0 configuration:
-
-```ts
-const apiId = '...' API Gateway id
-export const apiEndpoint = `https://${apiId}.execute-api.us-east-1.amazonaws.com/dev`
-
-export const authConfig = {
-  domain: '...',    // Domain from Auth0
-  clientId: '...',  // Client id from an Auth0 application
-  callbackUrl: 'http://localhost:3000/callback'
-}
-```
 
 ## Authentication
 
-To implement authentication in your application, you would have to create an Auth0 application and copy "domain" and "client id" to the `config.ts` file in the `client` folder. We recommend using asymmetrically encrypted JWT tokens.
-
-# Best practices
-
-To complete this exercise, please follow the best practices from the 6th lesson of this course.
-
-## Logging
-
-The starter code comes with a configured [Winston](https://github.com/winstonjs/winston) logger that creates [JSON formatted](https://stackify.com/what-is-structured-logging-and-why-developers-need-it/) log statements. You can use it to write log messages like this:
-
-```ts
-import { createLogger } from '../../utils/logger'
-const logger = createLogger('auth')
-
-// You can provide additional information with every log statement
-// This information can then be used to search for log statements in a log storage system
-logger.info('User was authorized', {
-  // Additional information stored with a log statement
-  key: 'value'
-})
-```
+This app is using Auth0 to implement authentication. The configuration of the "domain" and "client id" are available on the `client/src/config.ts` file.
 
 
-# Grading the submission
+## How to run the application
 
-Once you have finished developing your application, please set `apiId` and Auth0 parameters in the `config.ts` file in the `client` folder. A reviewer would start the React development server to run the frontend that should be configured to interact with your serverless application.
+### Prerequisite
 
-**IMPORTANT**
+1. Install serverless `npm install -g serverless`
 
-*Please leave your application running until a submission is reviewed. If implemented correctly it will cost almost nothing when your application is idle.*
+2. Set up a new user in IAM named "serverless" with Programmatic access and with AdministratorAccess policy attached and save the access key and secret key.
 
-# Suggestions
+3. Configure serverless to use the AWS credentials you just set up:
+`sls config credentials --provider aws --key YOUR_ACCESS_KEY --secret YOUR_SECRET_KEY --profile serverless`
 
-To store TODO items, you might want to use a DynamoDB table with local secondary index(es). A create a local secondary index you need to create a DynamoDB resource like this:
+### Backend
 
-```yml
+To deploy this application, use the following commands: `sls deploy -v`
 
-TodosTable:
-  Type: AWS::DynamoDB::Table
-  Properties:
-    AttributeDefinitions:
-      - AttributeName: partitionKey
-        AttributeType: S
-      - AttributeName: sortKey
-        AttributeType: S
-      - AttributeName: indexKey
-        AttributeType: S
-    KeySchema:
-      - AttributeName: partitionKey
-        KeyType: HASH
-      - AttributeName: sortKey
-        KeyType: RANGE
-    BillingMode: PAY_PER_REQUEST
-    TableName: ${self:provider.environment.TODOS_TABLE}
-    LocalSecondaryIndexes:
-      - IndexName: ${self:provider.environment.INDEX_NAME}
-        KeySchema:
-          - AttributeName: partitionKey
-            KeyType: HASH
-          - AttributeName: indexKey
-            KeyType: RANGE
-        Projection:
-          ProjectionType: ALL # What attributes will be copied to an index
 
-```
+### Frontend
 
-To query an index you need to use the `query()` method like:
-
-```ts
-await this.dynamoDBClient
-  .query({
-    TableName: 'table-name',
-    IndexName: 'index-name',
-    KeyConditionExpression: 'paritionKey = :paritionKey',
-    ExpressionAttributeValues: {
-      ':paritionKey': partitionKeyValue
-    }
-  })
-  .promise()
-```
-
-# How to run the application
-
-## Backend
-
-To deploy an application run the following commands:
-
-```
-cd backend
-npm install
-sls deploy -v
-```
-
-## Frontend
-
-To run a client application first edit the `client/src/config.ts` file to set correct parameters. And then run the following commands:
+To have the application running on your local machine, run the following commands:
 
 ```
 cd client
@@ -241,31 +163,36 @@ npm install
 npm run start
 ```
 
-This should start a development server with the React application that will interact with the serverless TODO application.
+## Screenshots
 
-# Postman collection
+### Authentication
 
-An alternative way to test your API, you can use the Postman collection that contains sample requests. You can find a Postman collection in this project. To import this collection, do the following.
+- Auth0 integration into the Bookshelf application
+![Auth0](images/Auth0_application.png)
 
-Click on the import button:
+- Login into the Bookshelf application through Auth0
+![Login](images/Login.png)
 
-![Alt text](images/import-collection-1.png?raw=true "Image 1")
+### Resource Creation
 
+- DynamoDB to store Book item with userId, bookId, createdAt, title, author, description and other attributes
+![DynamoDB](images/Dynamodb.png)
 
-Click on the "Choose Files":
+- s3 Bucket to store book cover image attached to Book item
+![s3Bucket](images/s3.png)
 
-![Alt text](images/import-collection-2.png?raw=true "Image 2")
+### Lambda Functions
 
+![Lambda functions](images/lambda_functions.png)
 
-Select a file to import:
+![Example Lambda function](images/lambda_createBook.png)
 
-![Alt text](images/import-collection-3.png?raw=true "Image 3")
+### Observability
 
+- CloudWatch to monitors logs
 
-Right click on the imported collection to set variables for the collection:
+![CloudWatchLogGroup](images/cloudwatch_logs.png)
 
-![Alt text](images/import-collection-4.png?raw=true "Image 4")
+- X-Ray to record metrics
 
-Provide variables for the collection (similarly to how this was done in the course):
-
-![Alt text](images/import-collection-5.png?raw=true "Image 5")
+![X-Ray](images/distributed_tracing.png)
