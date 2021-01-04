@@ -70,7 +70,7 @@ It receives a new Book item to be created in JSON format that looks like this:
 
 ```json
 {
-	  "title": "How to stop worrying and start living",
+    "title": "How to stop worrying and start living",
     "description": "A book that can change the course of your life",
     "author": "Dale Carnegie"
 }
@@ -99,11 +99,11 @@ It receives an object that contains five fields that can be updated in a book it
 
 ```json
 {
-    title: string
-    author: string
-    description: string
-    read: boolean
-    rating: number
+    "title": "How Innovation Works",
+    "author": "Matt Ridley",
+    "description": "A new description",
+    "read": true,
+    "rating": 2,
 }
 ```
 
