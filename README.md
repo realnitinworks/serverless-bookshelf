@@ -168,31 +168,31 @@ npm run start
 ### Authentication
 
 - Auth0 integration into the Bookshelf application
-![Auth0](images/Auth0_application.png)
+![Auth0](images/Auth0_application.jpg)
 
 - Login into the Bookshelf application through Auth0
-![Login](images/Login.png)
+![Login](images/Login.jpg)
 
 ### Resource Creation
 
 - DynamoDB to store Book item with userId, bookId, createdAt, title, author, description and other attributes
-![DynamoDB](images/Dynamodb.png)
+![DynamoDB](images/Dynamodb.jpg)
 
 - s3 Bucket to store book cover image attached to Book item
-![s3Bucket](images/s3.png)
+![s3Bucket](images/s3.jpg)
 
 ### Lambda Functions
 
-![Lambda functions](images/lambda_functions.png)
+![Lambda functions](images/lambda_functions.jpg)
 
-![Example Lambda function](images/lambda_createBook.png)
+![Example Lambda function](images/lambda_createBook.jpg)
 
 ### Observability
 
 - CloudWatch to monitors logs
 
-![CloudWatchLogGroup](images/cloudwatch_logs.png)
+![CloudWatchLogGroup](images/cloudwatch_logs.jpg)
 
 - X-Ray to record metrics
 
-![X-Ray](images/distributed_tracing.png)
+![X-Ray](images/distributed_tracing.jpg)
